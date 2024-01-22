@@ -20,8 +20,9 @@ concept TimeUnitConcept = std::same_as<T, std::chrono::seconds> || std::same_as<
 template <TimeUnitConcept T>
 class DurationTracker {
  public:
-  explicit DurationTracker(std::string_view label);
-  DurationTracker();
+  explicit DurationTracker(std::string_view label)
+      : label_(label), end_(false), begin_time_(std::chrono::steady_clock::now()){};
+  DurationTracker() : end_(false), begin_time_(std::chrono::steady_clock::now()){};
   DurationTracker(const DurationTracker &) = delete;
   auto operator=(const DurationTracker &) -> DurationTracker & = delete;
 
@@ -31,7 +32,13 @@ class DurationTracker {
     }
     Print();
   };
-  void End();
+  void End() {
+    if (end_) {
+      return;
+    }
+    end_.store(true);
+    Print();
+  }
   uint64_t EndAndGetDuration();
 
  private:
@@ -41,13 +48,6 @@ class DurationTracker {
   std::atomic<bool> end_;
   std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> begin_time_;
 };
-
-template <TimeUnitConcept T>
-DurationTracker<T>::DurationTracker(std::string_view label)
-    : label_(label), end_(false), begin_time_(std::chrono::steady_clock::now()) {}
-
-template <TimeUnitConcept T>
-DurationTracker<T>::DurationTracker() : end_(false), begin_time_(std::chrono::steady_clock::now()) {}
 
 template <TimeUnitConcept T>
 void DurationTracker<T>::Print() {
@@ -73,15 +73,14 @@ void DurationTracker<T>::Print() {
 }
 
 template <TimeUnitConcept T>
-void DurationTracker<T>::End() {
-  end_.store(true);
-  Print();
-}
-template <TimeUnitConcept T>
 uint64_t DurationTracker<T>::EndAndGetDuration() {
+  if (end_) {
+    return 0;
+  }
   end_.store(true);
   auto now = std::chrono::steady_clock::now();
   auto dur = std::chrono::duration_cast<T>(now - begin_time_).count();
   return dur;
 }
+
 }  // namespace concurrent
