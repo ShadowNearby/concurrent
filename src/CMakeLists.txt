@@ -1,6 +1,7 @@
 add_subdirectory(queue)
 add_subdirectory(pool)
 add_subdirectory(common)
+add_subdirectory(stack)
 
 add_library(concurrent STATIC ${ALL_OBJECT_FILES})
 
