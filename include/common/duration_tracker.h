@@ -11,11 +11,12 @@
 
 namespace concurrent {
 template <typename T>
-concept TimeUnitConcept = std::same_as<T, std::chrono::seconds> || std::same_as<T, std::chrono::milliseconds> ||
-                          std::same_as<T, std::chrono::microseconds> || std::same_as<T, std::chrono::nanoseconds> ||
-                          std::same_as<T, std::chrono::seconds> || std::same_as<T, std::chrono::minutes> ||
-                          std::same_as<T, std::chrono::hours> || std::same_as<T, std::chrono::days> ||
-                          std::same_as<T, std::chrono::weeks> || std::same_as<T, std::chrono::years>;
+concept TimeUnitConcept =
+    std::same_as<T, std::chrono::seconds> || std::same_as<T, std::chrono::milliseconds> ||
+    std::same_as<T, std::chrono::microseconds> || std::same_as<T, std::chrono::nanoseconds> ||
+    std::same_as<T, std::chrono::seconds> || std::same_as<T, std::chrono::minutes> ||
+    std::same_as<T, std::chrono::hours> || std::same_as<T, std::chrono::days> || std::same_as<T, std::chrono::weeks> ||
+    std::same_as<T, std::chrono::years> || std::same_as<T, std::chrono::months>;
 
 template <TimeUnitConcept T>
 class DurationTracker {
